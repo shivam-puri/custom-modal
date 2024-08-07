@@ -14,7 +14,7 @@ function App() {
   };
 
   return (
-    <div className="flex justify-start items-center h-screen w-full">
+    <div className="flex justify-start items-end h-screen w-full">
       <button
         ref={buttonRef}
         onClick={toggleModal}
@@ -23,9 +23,10 @@ function App() {
         Open Dropdown Modal
       </button>
       <DropdownModal
-        customPosition='middle-right'
+        customPosition='top-right'
         buttonRef={buttonRef}
         isOpen={isModalOpen}
+
         onClose={() => setModalOpen(false)}
       >
         <div className='flex font-semibold flex-col' >
@@ -39,11 +40,11 @@ function App() {
       <DropdownModal
         isOpen={isModal2Open}
         buttonRef={button2Ref}
+        // customPosition='top-right'
         onClose={() => setisModal2open(false)}
       >
         <div className='flex font-semibold flex-col' >
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Impedit nemo, cumque non quam quos fugiat quas, eligendi maiores velit voluptatem sint sit enim! Nostrum molestias aperiam commodi suscipit consequatur. Expedita, molestiae magnam. Perspiciatis tenetur recusandae ut atque consequatur a at.
-
+         di consequuntur est!
           <button className='flex hover:bg-red-700 bg-green-500' ref={button3Ref} onClick={() => setisModal3open(!isModal3Open)} >see more..</button>
         </div>
       </DropdownModal>

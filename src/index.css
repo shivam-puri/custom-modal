@@ -27,3 +27,12 @@
   transform: scale(1);
   transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

@@ -1,4 +1,4 @@
-import React, { Children, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const DropdownModal = ({ buttonRef, isOpen, onClose, customPosition = null, children }) => {
     const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -18,39 +18,39 @@ const DropdownModal = ({ buttonRef, isOpen, onClose, customPosition = null, chil
                     let left = buttonRect.left;
                     let customPositionValid = true;
 
-                    // Custom positioning logic
-                    switch (customPosition) {
-                        case 'top-right':
-                            top = buttonRect.top - modalRect.height;
-                            left = buttonRect.right;
-                            break;
-                        case 'middle-right':
-                            top = buttonRect.top + buttonRect.height / 2 - modalRect.height / 2;
-                            left = buttonRect.right;
-                            break;
-                        case 'bottom-right':
-                            top = buttonRect.bottom;
-                            left = buttonRect.right;
-                            break;
-                        case 'top-left':
-                            top = buttonRect.top - modalRect.height;
-                            left = buttonRect.left - modalRect.width;
-                            break;
-                        case 'middle-left':
-                            top = buttonRect.top + buttonRect.height / 2 - modalRect.height / 2;
-                            left = buttonRect.left - modalRect.width;
-                            break;
-                        case 'bottom-left':
-                            top = buttonRect.bottom;
-                            left = buttonRect.left - modalRect.width;
-                            break;
-                        default:
-                            customPositionValid = false;
-                            break;
-                    }
+                    if (customPosition) {
+                        // Custom positioning logic
+                        switch (customPosition) {
+                            case 'top-right':
+                                top = buttonRect.top - modalRect.height;
+                                left = buttonRect.right;
+                                break;
+                            case 'middle-right':
+                                top = buttonRect.top + buttonRect.height / 2 - modalRect.height / 2;
+                                left = buttonRect.right;
+                                break;
+                            case 'bottom-right':
+                                top = buttonRect.bottom;
+                                left = buttonRect.right;
+                                break;
+                            case 'top-left':
+                                top = buttonRect.top - modalRect.height;
+                                left = buttonRect.left - modalRect.width;
+                                break;
+                            case 'middle-left':
+                                top = buttonRect.top + buttonRect.height / 2 - modalRect.height / 2;
+                                left = buttonRect.left - modalRect.width;
+                                break;
+                            case 'bottom-left':
+                                top = buttonRect.bottom;
+                                left = buttonRect.left - modalRect.width;
+                                break;
+                            default:
+                                customPositionValid = false;
+                                break;
+                        }
 
-                    // Adjust position if modal exceeds viewport boundaries
-                    if (customPositionValid) {
+                        // Adjust position if modal exceeds viewport boundaries
                         const spaceAbove = buttonRect.top;
                         const spaceBelow = viewportHeight - buttonRect.bottom;
                         const spaceLeft = buttonRect.left;
@@ -65,19 +65,24 @@ const DropdownModal = ({ buttonRef, isOpen, onClose, customPosition = null, chil
                         if (exceedsTop || exceedsBottom || exceedsLeft || exceedsRight) {
                             customPositionValid = false;
                         }
+                    }
 
-                        if (!customPositionValid) {
-                            // Default positioning logic
-                            top = buttonRect.bottom;
-                            left = buttonRect.left;
+                    if (!customPosition || !customPositionValid) {
+                        // Default positioning logic
+                        top = buttonRect.bottom;
+                        left = buttonRect.left;
 
-                            if (modalRect.height > spaceBelow && spaceAbove > spaceBelow) {
-                                top = buttonRect.top - modalRect.height;
-                            }
+                        const spaceAbove = buttonRect.top;
+                        const spaceBelow = viewportHeight - buttonRect.bottom;
+                        const spaceLeft = buttonRect.left;
+                        const spaceRight = viewportWidth - buttonRect.right;
 
-                            if (modalRect.width > spaceRight && spaceLeft > spaceRight) {
-                                left = buttonRect.right - modalRect.width;
-                            }
+                        if (modalRect.height > spaceBelow && spaceAbove > spaceBelow) {
+                            top = buttonRect.top - modalRect.height;
+                        }
+
+                        if (modalRect.width > spaceRight && spaceLeft > spaceRight) {
+                            left = buttonRect.right - modalRect.width;
                         }
                     }
 
@@ -96,10 +101,9 @@ const DropdownModal = ({ buttonRef, isOpen, onClose, customPosition = null, chil
                 return () => {
                     document.body.style.overflow = '';
                 };
-            }, [isOpen, buttonRef]);
+            });
         }
     }, [isOpen, buttonRef, customPosition]);
-
 
     const handleClose = () => {
         setShow(false);
@@ -119,7 +123,7 @@ const DropdownModal = ({ buttonRef, isOpen, onClose, customPosition = null, chil
                 style={{ top: position.top, left: position.left }}
                 className={`absolute bg-transparent p-2 z-50 modal-content w-96 h-120 ${show ? 'show' : ''}`}
             >
-                <div className="flex justify-between items-center bg-transparent border rounded rounded-md shadow-lg w-full p-2 ">
+                <div className="flex justify-between items-center bg-white border rounded-md shadow-lg w-full p-2 max-h-[300px] max-w-[400px] overflow-auto scrollbar-hide ">
                     {children}
                 </div>
             </div>
