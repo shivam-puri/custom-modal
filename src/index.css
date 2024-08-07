@@ -3,22 +3,26 @@
 @tailwind components;
 @tailwind utilities;
 
-.modal-enter {
+/* Modal overlay */
+.modal-overlay {
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Modal content */
+.modal-content {
   transform: scale(0.95);
   opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.modal-enter-active {
+.modal-content.show {
   transform: scale(1);
   opacity: 1;
-}
-
-.modal-exit {
-  transform: scale(1);
-  opacity: 1;
-}
-
-.modal-exit-active {
-  transform: scale(0.95);
-  opacity: 0;
 }
