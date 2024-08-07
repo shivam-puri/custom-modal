@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Children, useEffect, useRef, useState } from 'react';
 
-const DropdownModal = ({ buttonRef, isOpen, onClose, customPosition = null }) => {
+const DropdownModal = ({ buttonRef, isOpen, onClose, customPosition = null, children }) => {
     const [position, setPosition] = useState({ top: 0, left: 0 });
     const [show, setShow] = useState(false);
     const modalRef = useRef(null);
@@ -119,15 +119,8 @@ const DropdownModal = ({ buttonRef, isOpen, onClose, customPosition = null }) =>
                 style={{ top: position.top, left: position.left }}
                 className={`absolute bg-transparent p-2 z-50 modal-content w-96 h-120 ${show ? 'show' : ''}`}
             >
-                <div className="flex justify-between items-center bg-white border rounded shadow-lg w-full">
-                    <div className='flex flex-col'>
-                        <h2>Modal</h2>
-                        <button className='btn rounded bg-black text-white m-2 hover:opacity-75'  >Button1</button>
-                        <button className='btn rounded bg-black text-white m-2'>Button1</button>
-                        <button className='btn rounded bg-black text-white m-2'>Button1</button>
-                        <button className='btn rounded bg-black text-white m-2'>Button1</button>
-                        <button className='btn rounded bg-black text-white m-2'>Button1</button>
-                    </div>
+                <div className="flex justify-between items-center bg-transparent border rounded rounded-md shadow-lg w-full p-2 ">
+                    {children}
                 </div>
             </div>
         </>
