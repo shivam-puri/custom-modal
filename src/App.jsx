@@ -10,7 +10,7 @@ function App() {
   };
 
   return (
-    <div className="flex justify-start items-center h-screen">
+    <div className="flex justify-start items-center h-screen w-full">
       <button
         ref={buttonRef}
         onClick={toggleModal}
@@ -19,10 +19,10 @@ function App() {
         Open Dropdown Modal
       </button>
       <DropdownModal
-        customPosition='top-left'
+        customPosition='middle-right'
         buttonRef={buttonRef}
         isOpen={isModalOpen}
-        onClose={() => { setModalOpen(false) }}
+        onClose={() => setModalOpen(false)}
       />
     </div>
   );
