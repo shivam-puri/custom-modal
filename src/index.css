@@ -1,24 +1,25 @@
-/* src/styles.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 .modal-enter {
-  transform: scale(0.95);
   opacity: 0;
+  transform: scale(0.9);
 }
 
 .modal-enter-active {
-  transform: scale(1);
   opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
 }
 
 .modal-exit {
-  transform: scale(1);
   opacity: 1;
+  transform: scale(1);
 }
 
 .modal-exit-active {
-  transform: scale(0.95);
   opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.3s ease-in, transform 0.3s ease-in;
 }
