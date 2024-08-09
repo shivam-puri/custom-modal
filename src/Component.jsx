@@ -11,7 +11,7 @@ const Component = () => {
             <h1>Lorem ipsum dolor sit amet.</h1>
             <h2>Lorem ipsum dolor sit amet, consectetur adipisicing.</h2>
 
-            <button onClick={() => openModal(<Component2 />)} > Click to open Component2 </button>
+            <button onClick={(e) => openModal(e, <Component2 />)} > Click to open Component2 </button>
         </>
     )
 }
