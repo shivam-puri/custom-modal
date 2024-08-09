@@ -72,7 +72,6 @@ export const calculatePosition = (buttonRect, modal, customPosition) => {
             top + modal.height <= viewportHeight &&
             left + modal.width <= viewportWidth
         ) {
-            console.log("custom position applied ✅")
             return { top, left };
         }
     }
@@ -80,28 +79,24 @@ export const calculatePosition = (buttonRect, modal, customPosition) => {
     // Fallback to default positioning
     // Check if modal can be placed at bottom right of button
     if (buttonRect.bottom + modal.height <= viewportHeight && buttonRect.right + modal.width <= viewportWidth) {
-        console.log("implemented 1 ✅")
         top = buttonRect.bottom;
         left = buttonRect.right;
         return { top, left };
     }
     // Check if modal can be placed at top right of button
     if (buttonRect.top - modal.height >= 0 && buttonRect.right + modal.width <= viewportWidth) {
-        console.log("implemented 2 ✅")
         top = buttonRect.top - modal.height;
         left = buttonRect.right;
         return { top, left };
     }
     // Check if modal can be placed at left top of button
     if (buttonRect.top - modal.height >= 0 && buttonRect.left - modal.width >= 0) {
-        console.log("implemented 3 ✅")
         top = buttonRect.top - modal.height;
         left = buttonRect.left - modal.width;
         return { top, left };
     }
     // Check if modal can be placed at left bottom of button
     if (buttonRect.bottom + modal.height <= viewportHeight && buttonRect.left - modal.width >= 0) {
-        console.log("implemented 4 ✅")
         top = buttonRect.bottom;
         left = buttonRect.left - modal.width;
         return { top, left };

@@ -23,9 +23,8 @@ export const ModalProvider = ({ children }) => {
         const resizeObserver = new ResizeObserver((entries) => {
             for (let entry of entries) {
                 const { width, height } = calculateDimensions(entries, root, tempDiv);
-                console.log("width, height", width, height)
                 const position = calculatePosition(buttonRect, { width, height }, customPosition);
-                setModalStack((prev) => [...prev, { content, position, zIndex: prev.length * 40 + 40 }]);
+                setModalStack((prev) => [...prev, { content, position, zIndex: prev.length * 40 + 40, show: true }]);
                 resizeObserver.disconnect();
             }
         });
@@ -33,9 +32,20 @@ export const ModalProvider = ({ children }) => {
     };
 
     const closeModal = () => {
-        setModalStack((prev) => prev.slice(0, -1));
-    };
+        // Change the show property of the last modal to false
+        setModalStack((prev) => {
+            const updatedStack = [...prev];
+            if (updatedStack.length > 0) {
+                updatedStack[updatedStack.length - 1].show = false;
+            }
+            return updatedStack;
+        });
 
+        // After 100 ms, pop the last modal from the stack
+        setTimeout(() => {
+            setModalStack((prev) => prev.slice(0, -1));
+        }, 100);
+    };
     const topModalIndex = modalStack.length - 1;
 
     return (
@@ -47,7 +57,7 @@ export const ModalProvider = ({ children }) => {
                 {
                     modalStack.map((modal, index) => {
                         return (
-                            <Modal zIndex={(index + 1) * 40} top={modal.position.top} left={modal.position.left} key={index}>
+                            <Modal show={modal.show} zIndex={(index + 1) * 40} top={modal.position.top} left={modal.position.left} key={index}>
                                 {modal.content}
                             </Modal>
                         )

@@ -9,6 +9,15 @@
   padding: 20px;
   overflow: auto;
   border-radius: 10px;
+  transform: scale(0.95);
+  opacity: 0;
+  transition: transform 0.1s ease, opacity 0.1s ease; /* Consistent duration */
+}
+
+.modal.show {
+  transform: scale(1);
+  opacity: 1;
+  transition: opacity 0.1s ease-out, transform 0.1s ease-out; /* Consistent duration */
 }
 
 .overlay {
