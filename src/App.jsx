@@ -8,7 +8,7 @@ const App = () => {
 
   return (
     <>
-      <div style={{ width: "100", height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }} >
+      <div style={{ width: "100", height: "100vh", display: "flex", alignItems: "start", justifyContent: "end" }} >
         <button onClick={(e) => openModal(e, <Component />)} >openModal1</button>
       </div>
     </>

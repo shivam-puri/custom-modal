@@ -24,8 +24,6 @@ export const ModalProvider = ({ children }) => {
                 </ModalProvider>
             );
 
-            tempDiv.offsetHeight;
-
             requestAnimationFrame(() => {
                 const { offsetWidth, offsetHeight } = tempDiv;
                 root.unmount();
@@ -83,10 +81,38 @@ export const ModalProvider = ({ children }) => {
 
     const openModal = async (e, content) => {
         const buttonRect = e.target.getBoundingClientRect();
-        const { width: modalWidth, height: modalHeight } = await measureComponent(content);
-        console.log("modal width x height", modalWidth, modalHeight)
-        const position = calculatePosition(buttonRect, { width: modalWidth, height: modalHeight });
-        setModalStack((prev) => [...prev, { content, position, zIndex: prev.length * 40 + 40 }]);
+
+        const tempDiv = document.createElement('div');
+        tempDiv.style.width = 'fit-content';
+        tempDiv.style.height = 'fit-content';
+        tempDiv.style.maxWidth = "500px";
+        tempDiv.style.maxHeight = "300px";
+        tempDiv.style.visibility = 'hidden';
+        tempDiv.style.position = 'fixed';
+        tempDiv.style.overflow = 'auto';
+
+        document.body.appendChild(tempDiv);
+
+        const root = createRoot(tempDiv);
+        root.render(<ModalProvider>{content}</ModalProvider>); // Render the content directly
+
+        const resizeObserver = new ResizeObserver((entries) => {
+            for (let entry of entries) {
+                let { width, height } = entry.contentRect;
+                width = Math.min(width + 40, 500)
+                height = Math.min(height + 40, 300)
+                console.log("width, height", width, height)
+
+                root.unmount();
+                document.body.removeChild(tempDiv);
+
+                const position = calculatePosition(buttonRect, { width, height });
+                setModalStack((prev) => [...prev, { content, position, zIndex: prev.length * 40 + 40 }]);
+                resizeObserver.disconnect(); // Stop observing after getting the size
+            }
+        });
+
+        resizeObserver.observe(tempDiv); // Start observing the temporary div
     };
 
     const closeModal = () => {
