@@ -1,0 +1,114 @@
+export const calculateDimensions = (entries, root, tempDiv) => { // {{ edit_2 }}
+    for (let entry of entries) {
+        let { width, height } = entry.contentRect;
+        width = Math.min(width + 40, 500);
+        height = Math.min(height + 40, 300);
+        root.unmount();
+        document.body.removeChild(tempDiv);
+        return { width, height };
+    }
+};
+
+export const createTempDiv = () => { // {{ edit_1 }}
+    const tempDiv = document.createElement('div');
+    tempDiv.style.width = 'fit-content';
+    tempDiv.style.height = 'fit-content';
+    tempDiv.style.maxWidth = "500px";
+    tempDiv.style.maxHeight = "300px";
+    tempDiv.style.visibility = 'hidden';
+    tempDiv.style.position = 'fixed';
+    tempDiv.style.overflow = 'auto';
+    return tempDiv;
+};
+
+
+export const calculatePosition = (buttonRect, modal, customPosition) => {
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+
+    let top, left;
+
+    const positions = {
+        'top-left': () => {
+            top = buttonRect.top - modal.height;
+            left = buttonRect.left - modal.width;
+        },
+        'middle-left': () => {
+            top = buttonRect.top + (buttonRect.height / 2) - (modal.height / 2);
+            left = buttonRect.left - modal.width;
+        },
+        'bottom-left': () => {
+            top = buttonRect.bottom;
+            left = buttonRect.left - modal.width;
+        },
+        'center-bottom': () => {
+            top = buttonRect.bottom;
+            left = buttonRect.left + (buttonRect.width / 2) - (modal.width / 2);
+        },
+        'center-top': () => {
+            top = buttonRect.top - modal.height;
+            left = buttonRect.left + (buttonRect.width / 2) - (modal.width / 2);
+        },
+        'right-bottom': () => {
+            top = buttonRect.bottom;
+            left = buttonRect.right;
+        },
+        'middle-right': () => {
+            top = buttonRect.top + (buttonRect.height / 2) - (modal.height / 2);
+            left = buttonRect.right;
+        },
+        'top-right': () => {
+            top = buttonRect.top - modal.height;
+            left = buttonRect.right;
+        }
+    };
+
+    // Apply the custom position if provided and it fits within the viewport
+    if (customPosition && positions[customPosition]) {
+        positions[customPosition]();
+        if (
+            top >= 0 &&
+            left >= 0 &&
+            top + modal.height <= viewportHeight &&
+            left + modal.width <= viewportWidth
+        ) {
+            console.log("custom position applied ✅")
+            return { top, left };
+        }
+    }
+
+    // Fallback to default positioning
+    // Check if modal can be placed at bottom right of button
+    if (buttonRect.bottom + modal.height <= viewportHeight && buttonRect.right + modal.width <= viewportWidth) {
+        console.log("implemented 1 ✅")
+        top = buttonRect.bottom;
+        left = buttonRect.right;
+        return { top, left };
+    }
+    // Check if modal can be placed at top right of button
+    if (buttonRect.top - modal.height >= 0 && buttonRect.right + modal.width <= viewportWidth) {
+        console.log("implemented 2 ✅")
+        top = buttonRect.top - modal.height;
+        left = buttonRect.right;
+        return { top, left };
+    }
+    // Check if modal can be placed at left top of button
+    if (buttonRect.top - modal.height >= 0 && buttonRect.left - modal.width >= 0) {
+        console.log("implemented 3 ✅")
+        top = buttonRect.top - modal.height;
+        left = buttonRect.left - modal.width;
+        return { top, left };
+    }
+    // Check if modal can be placed at left bottom of button
+    if (buttonRect.bottom + modal.height <= viewportHeight && buttonRect.left - modal.width >= 0) {
+        console.log("implemented 4 ✅")
+        top = buttonRect.bottom;
+        left = buttonRect.left - modal.width;
+        return { top, left };
+    }
+    // If none of the above positions are suitable, center the modal in the viewport
+    top = (viewportHeight - modal.height) / 2;
+    left = (viewportWidth - modal.width) / 2;
+
+    return { top, left };
+};

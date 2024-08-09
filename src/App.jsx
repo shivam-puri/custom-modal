@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useModal } from "./context/ModalContext";
-import Component from "./Component.jsx";
+import Component from "./components/Component";
 
 const App = () => {
 
@@ -8,8 +8,8 @@ const App = () => {
 
   return (
     <>
-      <div style={{ width: "100", height: "100vh", display: "flex", alignItems: "start", justifyContent: "end" }} >
-        <button onClick={(e) => openModal(e, <Component />)} >openModal1</button>
+      <div style={{ width: "100", height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }} >
+        <button onClick={(e) => openModal(e, <Component />, "center-bottom")} >openModal1</button>
       </div>
     </>
   )

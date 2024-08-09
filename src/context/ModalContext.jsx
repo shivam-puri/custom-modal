@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useRef } from 'react';
+import { calculateDimensions, calculatePosition, createTempDiv } from '../utils/utility';
 import { createRoot } from 'react-dom/client';
-import Modal from '../components/Modal';
+import Modal from '../lib-components/Modal';
+import Overlay from '../lib-components/Overlay';
 
 const ModalContext = createContext();
 
@@ -11,108 +13,23 @@ export const ModalProvider = ({ children }) => {
     const [modalStack, setModalStack] = useState([]);
     const offScreenRef = useRef(null);
 
-    const measureComponent = (component) => {
-        return new Promise((resolve) => {
-            const tempDiv = document.createElement('div');
-            tempDiv.style.visibility = 'hidden';
-            tempDiv.style.position = 'absolute';
-            offScreenRef.current.appendChild(tempDiv);
-            const root = createRoot(tempDiv);
-            root.render(
-                <ModalProvider>
-                    {component}
-                </ModalProvider>
-            );
-
-            requestAnimationFrame(() => {
-                const { offsetWidth, offsetHeight } = tempDiv;
-                root.unmount();
-                offScreenRef.current.removeChild(tempDiv);
-                resolve({ width: offsetWidth, height: offsetHeight });
-            });
-        });
-    };
-
-    const calculatePosition = (buttonRect, modal) => {
-        const viewportHeight = window.innerHeight;
-        const viewportWidth = window.innerWidth;
-
-        let top, left;
-
-        // Check if modal can be placed at bottom right of button
-        if (buttonRect.bottom + modal.height <= viewportHeight && buttonRect.right + modal.width <= viewportWidth) {
-            console.log("implemented 1 ✅")
-            top = buttonRect.bottom;
-            left = buttonRect.right;
-            return { top, left };
-        }
-
-        // Check if modal can be placed at top right of button
-        if (buttonRect.top - modal.height >= 0 && buttonRect.right + modal.width <= viewportWidth) {
-            console.log("implemented 2 ✅")
-            top = buttonRect.top - modal.height;
-            left = buttonRect.right;
-            return { top, left };
-        }
-
-        // Check if modal can be placed at left top of button
-        if (buttonRect.top - modal.height >= 0 && buttonRect.left - modal.width >= 0) {
-            console.log("implemented 3 ✅")
-            top = buttonRect.top - modal.height;
-            left = buttonRect.left - modal.width;
-            return { top, left };
-        }
-
-        // Check if modal can be placed at left bottom of button
-        if (buttonRect.bottom + modal.height <= viewportHeight && buttonRect.left - modal.width >= 0) {
-            console.log("implemented 4 ✅")
-            top = buttonRect.bottom;
-            left = buttonRect.left - modal.width;
-            return { top, left };
-        }
-
-        // If none of the above positions are suitable, center the modal in the viewport
-        top = (viewportHeight - modal.height) / 2;
-        left = (viewportWidth - modal.width) / 2;
-
-        return { top, left };
-    };
-
-
-    const openModal = async (e, content) => {
+    const openModal = async (e, content, customPosition) => {
         const buttonRect = e.target.getBoundingClientRect();
-
-        const tempDiv = document.createElement('div');
-        tempDiv.style.width = 'fit-content';
-        tempDiv.style.height = 'fit-content';
-        tempDiv.style.maxWidth = "500px";
-        tempDiv.style.maxHeight = "300px";
-        tempDiv.style.visibility = 'hidden';
-        tempDiv.style.position = 'fixed';
-        tempDiv.style.overflow = 'auto';
-
+        const tempDiv = createTempDiv();
         document.body.appendChild(tempDiv);
-
         const root = createRoot(tempDiv);
-        root.render(<ModalProvider>{content}</ModalProvider>); // Render the content directly
+        root.render(<ModalProvider>{content}</ModalProvider>);
 
         const resizeObserver = new ResizeObserver((entries) => {
             for (let entry of entries) {
-                let { width, height } = entry.contentRect;
-                width = Math.min(width + 40, 500)
-                height = Math.min(height + 40, 300)
+                const { width, height } = calculateDimensions(entries, root, tempDiv);
                 console.log("width, height", width, height)
-
-                root.unmount();
-                document.body.removeChild(tempDiv);
-
-                const position = calculatePosition(buttonRect, { width, height });
+                const position = calculatePosition(buttonRect, { width, height }, customPosition);
                 setModalStack((prev) => [...prev, { content, position, zIndex: prev.length * 40 + 40 }]);
-                resizeObserver.disconnect(); // Stop observing after getting the size
+                resizeObserver.disconnect();
             }
         });
-
-        resizeObserver.observe(tempDiv); // Start observing the temporary div
+        resizeObserver.observe(tempDiv);
     };
 
     const closeModal = () => {
@@ -141,13 +58,3 @@ export const ModalProvider = ({ children }) => {
     );
 };
 
-const Overlay = ({ zIndex }) => {
-    const { closeModal } = useModal();
-    return (
-        <div
-            className="overlay"
-            style={{ zIndex }}
-            onClick={closeModal}
-        />
-    );
-};
